@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="fr"><head>
+ <link rel="icon" type="image/jpeg" href="image.jpg">
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Démos ATS</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;600&family=Barlow+Condensed:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#f6f8fc;--grid:#d7e1f2;--ink:#1b2a6b;--red:#c8372d;--up:#1c8c58;--mut:#5a6590}
+*{box-sizing:border-box}
+body{margin:0;font:18px/1.55 Spectral,Georgia,serif;color:var(--ink);background:linear-gradient(var(--grid) 1px,transparent 1px) 0 0/100% 28px,linear-gradient(90deg,var(--grid) 1px,transparent 1px) 0 0/28px 100%,var(--paper)}
+#tape{background:#14171f;color:#e8ecf5;overflow:hidden;white-space:nowrap;font:700 16px 'Barlow Condensed',sans-serif;letter-spacing:.04em}
+#tape-in{display:inline-block;padding:7px 0;animation:tape 40s linear infinite}
+#tape-in:empty{display:none}
+#tape span{margin:0 22px}
+#tape .u{color:#3ddc97}#tape .d{color:#ff6b5e}
+@keyframes tape{to{transform:translateX(-50%)}}
+main{max-width:760px;margin:0 auto;padding:18px 16px 60px}
+h1{font-size:34px;margin:6px 0}h2{font-size:22px;margin:.6em 0 .3em}
+sub,sup{line-height:0}
+#stats{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-end;border-bottom:2px solid var(--red);padding-bottom:10px}
+.big{font:700 56px/1 'Barlow Condensed',sans-serif}
+.k{color:var(--mut);font-size:15px;margin:0}
+#note{color:var(--red);font-weight:600;min-height:1.5em;margin:8px 0 0}
+button{font:inherit;cursor:pointer;color:inherit}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;padding:10px 14px;background:#fff;border:1.5px solid var(--ink);border-radius:3px}
+.opt:hover:not(:disabled){background:#e9eefc}
+.good{background:#dff3e8!important;border-color:var(--up)}
+.bad{background:#fde5e2!important;border-color:var(--red)}
+.go{background:var(--ink);color:#fff;border:0;padding:10px 18px;border-radius:3px;margin:8px 8px 0 0}
+.go:disabled{opacity:.4;cursor:default}
+.alt{background:none;border:1.5px solid var(--ink);padding:9px 16px;border-radius:3px;margin:8px 8px 0 0}
+.alt:disabled{opacity:.4;cursor:default}
+textarea,input{width:100%;font:16px/1.5 Spectral,serif;padding:10px;border:1.5px solid var(--ink);border-radius:3px;background:#fff;color:var(--ink)}
+textarea{min-height:130px}
+.sol{background:#fff;border-left:4px solid var(--red);padding:8px 14px;margin:12px 0}
+.sol p{margin:.5em 0}
+table{width:100%;border-collapse:collapse;font:500 19px 'Barlow Condensed',sans-serif}
+td,th{padding:5px 8px;border-bottom:1px solid var(--grid);text-align:right}
+td:nth-child(-n+2),th:nth-child(-n+2){text-align:left}
+.u{color:var(--up)}.d{color:var(--red)}
+button:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){#tape-in{animation:none}}
+</style></head><body>
+<div id="tape"><div id="tape-in"></div></div>
+<main><h1>Démos ATS</h1><div id="stats"></div><p id="note"></p><section id="view"></section><h2>La Bourse</h2><div id="mkt"></div></main>
+<script>
+const API="https://script.google.com/macros/s/AKfycby8auB0CtouiH7d71zHmVpbk4JThARl8kCSppHcaQ_Vwoge5gTDUoOgls55cWG16HCd/exec";/* URL de ton script Google Apps Script (voir apps-script.gs) */
+const MSG="Continue, tu es sur la bonne voie, Objectif CentraleSupélec !";
+const KEY="demos-ats-v1",$=i=>document.getElementById(i);
+/* o[0] = bon début ; les 3 autres sont faux (l’ordre est mélangé à l’affichage) ; s = suite de la démonstration */
+const D=[
+{t:"L’intersection F ∩ G de deux sous-espaces vectoriels de E est un sous-espace vectoriel de E.",
+o:["On vérifie 0<sub>E</sub> ∈ F ∩ G : 0<sub>E</sub> ∈ F et 0<sub>E</sub> ∈ G car F et G sont des sous-espaces vectoriels.","Soit u ∈ F et v ∈ G ; montrons que u + v ∈ F ∩ G.","F ∪ G est un sous-espace vectoriel et F ∩ G en est une partie : c’est donc un sous-espace.","Il suffit de montrer F ∩ G ⊂ F + G, puisque F + G est un sous-espace vectoriel."],
+s:"Soient u, v ∈ F ∩ G et λ ∈ 𝕂. Comme F est un sous-espace, u + v ∈ F et λu ∈ F ; de même dans G. Donc u + v et λu sont dans F ∩ G, qui contient 0<sub>E</sub> : c’est un sous-espace vectoriel."},
+{t:"Si E = F ⊕ G, tout vecteur u de E s’écrit de façon unique u = v + w avec v ∈ F et w ∈ G.",
+o:["Supposons u = v + w = v’ + w’ avec v, v’ ∈ F et w, w’ ∈ G. Alors v − v’ = w’ − w.","Comme F ∩ G = {0<sub>E</sub>}, on a u = 0<sub>E</sub> : la décomposition est donc unique.","On pose v = p(u) et w = u − v, où p est la projection sur F ; l’unicité découle de la linéarité de p.","Supposons u = v + w = v’ + w’ ; en soustrayant, v = v’ et w = w’ puisque F et G sont des sous-espaces."],
+s:"Le vecteur v − v’ est dans F, et w’ − w est dans G : étant égaux, ils sont dans F ∩ G = {0<sub>E</sub>}. Donc v = v’ et w = w’. L’existence vient de F + G = E."},
+{t:"Si (v<sub>1</sub>, …, v<sub>n</sub>) est une base de E, tout u ∈ E s’écrit de façon unique u = λ<sub>1</sub>v<sub>1</sub> + … + λ<sub>n</sub>v<sub>n</sub>.",
+o:["L’existence vient du caractère générateur. Pour l’unicité, soient u = Σλ<sub>i</sub>v<sub>i</sub> = Σμ<sub>i</sub>v<sub>i</sub> ; par différence, Σ(λ<sub>i</sub> − μ<sub>i</sub>)v<sub>i</sub> = 0.","La famille est génératrice, donc les coefficients λ<sub>i</sub> sont uniques.","Multiplions u = Σλ<sub>i</sub>v<sub>i</sub> par 0 : on obtient 0 = Σ0·v<sub>i</sub>, donc tous les λ<sub>i</sub> sont nuls.","Soient deux décompositions de u ; en les additionnant, Σ(λ<sub>i</sub> + μ<sub>i</sub>)v<sub>i</sub> = 2u, d’où λ<sub>i</sub> = μ<sub>i</sub>."],
+s:"La famille étant libre, λ<sub>i</sub> − μ<sub>i</sub> = 0 pour tout i, donc λ<sub>i</sub> = μ<sub>i</sub> : les coordonnées de u sont uniques."},
+{t:"Pour tous z, z’ ∈ ℂ, |zz’| = |z||z’|.",
+o:["Calculons |zz’|² = zz’·conj(zz’) = z·conj(z)·z’·conj(z’), car le conjugué d’un produit est le produit des conjugués.","Posons z = a + ib et z’ = a’ + ib’ : alors |zz’| = |aa’| + |bb’|.","L’inégalité triangulaire donne |zz’| ≤ |z||z’| ; il reste à montrer l’autre inégalité.","Comme |z| = √z, on a |zz’| = √(zz’) = √z·√z’."],
+s:"Donc |zz’|² = |z|²|z’|² = (|z||z’|)². Les modules étant positifs, on prend la racine carrée : |zz’| = |z||z’|."},
+{t:"Soit ω une racine n-ième de l’unité, ω ≠ 1. Alors 1 + ω + ω² + … + ω<sup>n−1</sup> = 0.",
+o:["Comme ω ≠ 1, la somme géométrique vaut (1 − ω<sup>n</sup>)/(1 − ω).","Comme ω<sup>n</sup> = 1, chaque terme ω<sup>k</sup> vaut 1 ; la somme vaut donc n.","Comme |ω| = 1, l’inégalité triangulaire donne |Σω<sup>k</sup>| ≤ n, d’où une somme nulle.","Par récurrence sur n, en supposant 1 + ω + … + ω<sup>n−2</sup> = 0."],
+s:"Or ω<sup>n</sup> = 1, donc la somme vaut 0/(1 − ω) = 0."},
+{t:"Le noyau Ker f d’une application linéaire f : E → F est un sous-espace vectoriel de E.",
+o:["Ker f est non vide : f(0<sub>E</sub>) = 0<sub>F</sub>, donc 0<sub>E</sub> ∈ Ker f.","Ker f = f<sup>−1</sup>({0<sub>F</sub>}) est l’image d’un sous-espace par f : c’est donc un sous-espace de E.","Soit y ∈ Im f ; montrons que y ∈ Ker f.","Supposons f injective : alors Ker f = {0<sub>E</sub>}, qui est bien un sous-espace vectoriel."],
+s:"Soient x<sub>1</sub>, x<sub>2</sub> ∈ Ker f et λ, μ ∈ 𝕂 : f(λx<sub>1</sub> + μx<sub>2</sub>) = λf(x<sub>1</sub>) + μf(x<sub>2</sub>) = 0<sub>F</sub>. Donc λx<sub>1</sub> + μx<sub>2</sub> ∈ Ker f."},
+{t:"Pour tous z, z’ ∈ ℂ, |z + z’| ≤ |z| + |z’|.",
+o:["On développe |z + z’|² = (z + z’)(conj z + conj z’) = |z|² + |z’|² + 2 Re(z’·conj z).","Par linéarité du module, |z + z’| = |z| + |z’| : l’inégalité est donc immédiate.","Posons z = a + ib et z’ = a’ + ib’ : alors |z + z’| = |a + a’| + |b + b’|.","Par récurrence sur le nombre de termes, en partant de |z| ≥ 0."],
+s:"Comme Re(w) ≤ |w| et |z’·conj z| = |z||z’|, on a |z + z’|² ≤ (|z| + |z’|)². La racine carrée étant croissante sur ℝ<sub>+</sub>, |z + z’| ≤ |z| + |z’|."},
+{t:"Une application linéaire f : E → F est injective si et seulement si Ker f = {0<sub>E</sub>}.",
+o:["(⇒) Si x ∈ Ker f, alors f(x) = 0<sub>F</sub> = f(0<sub>E</sub>), donc x = 0<sub>E</sub> par injectivité de f.","Si Ker f = {0<sub>E</sub>}, alors Im f = F : l’application est donc injective.","Comme f(0<sub>E</sub>) = 0<sub>F</sub>, on a toujours Ker f = {0<sub>E</sub>} : l’équivalence est évidente.","Supposons f(x) = f(y) ; par linéarité de f, on en déduit directement x = y."],
+s:"(⇐) Supposons Ker f = {0<sub>E</sub>} et f(x) = f(y). Alors f(x − y) = f(x) − f(y) = 0<sub>F</sub>, donc x − y ∈ Ker f = {0<sub>E</sub>}, soit x = y."},
+{t:"Les solutions de z<sup>n</sup> = 1 dans ℂ sont les n nombres e<sup>2ikπ/n</sup>, k = 0, …, n − 1.",
+o:["Si z<sup>n</sup> = 1, alors |z|<sup>n</sup> = 1 donc |z| = 1 : on écrit z = e<sup>iθ</sup>.","Comme z<sup>n</sup> = 1, on prend la racine n-ième : z = 1 est la seule solution.","Il suffit de vérifier que (e<sup>ikπ/n</sup>)<sup>n</sup> = 1 pour tout k : ce sont les solutions.","On écrit z = re<sup>iθ</sup> et on impose r = 1 et θ = 0 pour que z<sup>n</sup> = 1."],
+s:"Alors e<sup>inθ</sup> = 1 ⟺ nθ = 2kπ (k ∈ ℤ) ⟺ θ = 2kπ/n. Par 2π-périodicité, e<sup>2ik<sub>1</sub>π/n</sup> = e<sup>2ik<sub>2</sub>π/n</sup> ⟺ n divise k<sub>1</sub> − k<sub>2</sub> : il y a exactement n solutions distinctes, k = 0, …, n − 1."},
+{t:"La distance du point A à la droite 𝒟 : ax + by + c = 0 vaut |ax<sub>A</sub> + by<sub>A</sub> + c| / √(a² + b²).",
+o:["Soit B ∈ 𝒟, n = (a, b) normal à 𝒟 et M le projeté orthogonal de A sur 𝒟 : BA = BM + MA avec BM ⟂ n et MA colinéaire à n.","Le vecteur (a, b) dirige 𝒟 ; il suffit donc de calculer sa norme √(a² + b²).","Soit M quelconque sur 𝒟 ; on pose AM = ‖(a, b)‖ et on développe.","On remplace x et y par x<sub>A</sub> et y<sub>A</sub> dans l’équation de 𝒟 : le résultat est la distance."],
+s:"Donc ⟨BA, n⟩ = ⟨MA, n⟩ = ±MA·‖n‖, d’où d(A, 𝒟) = MA = |⟨BA, n⟩| / ‖n‖ = |a(x<sub>A</sub> − x<sub>B</sub>) + b(y<sub>A</sub> − y<sub>B</sub>)| / √(a² + b²). Comme B ∈ 𝒟, ax<sub>B</sub> + by<sub>B</sub> = −c : on obtient la formule."},
+{t:"Soit az² + bz + c = 0 (a, b, c ∈ ℂ, a ≠ 0), Δ = b² − 4ac et δ ∈ ℂ tel que δ² = Δ. Les solutions sont (−b ± δ)/(2a).",
+o:["On met sous forme canonique : az² + bz + c = a[(z + b/2a)² − Δ/(4a²)].","Si Δ < 0, l’équation n’a aucune solution dans ℂ : on suppose donc Δ ≥ 0.","On pose δ = √Δ, ce qui est licite dans ℂ pour tout Δ, puis on applique la formule.","On divise par a et on ajoute b²/a² : z² + (b/a)z + b²/a² = b²/a²."],
+s:"Comme Δ = δ², on obtient a[(z + b/2a)² − (δ/2a)²] = a(z − z<sub>1</sub>)(z − z<sub>2</sub>) avec z<sub>1</sub> = (−b + δ)/(2a) et z<sub>2</sub> = (−b − δ)/(2a) (identité remarquable). Un produit est nul ssi un facteur l’est : z = z<sub>1</sub> ou z = z<sub>2</sub>."},
+{t:"Si E = F ⊕ G et p est la projection sur F parallèlement à G, alors Ker p = G et Im p = F.",
+o:["Tout u ∈ E s’écrit de façon unique u = v + w (v ∈ F, w ∈ G) ; par définition p(u) = v.","Comme p∘p = p, on a Ker p = Im p, puisque p est injective.","Ker p = F, car p envoie les vecteurs de F sur 0<sub>E</sub> ; et Im p = G.","Supposons p injective : alors Ker p = {0<sub>E</sub>} et Im p = E."],
+s:"p(u) = 0<sub>E</sub> ⟺ v = 0<sub>E</sub> ⟺ u = w ∈ G : Ker p = G. Toujours p(u) = v ∈ F, et si u ∈ F alors u = u + 0<sub>E</sub> donc p(u) = u : F ⊂ Im p. Ainsi Im p = F."}
+];
+const C=[
+["Famille libre","λ<sub>1</sub>v<sub>1</sub> + … + λ<sub>p</sub>v<sub>p</sub> = 0 ⇒ tous les λ<sub>i</sub> sont nuls."],
+["Famille génératrice de E","Tout vecteur de E est combinaison linéaire des v<sub>i</sub>."],
+["Base de E","Famille libre ET génératrice : les coordonnées sont uniques."],
+["F et G supplémentaires dans E","F ∩ G = {0<sub>E</sub>} et F + G = E (écriture u = v + w unique)."],
+["Caractériser un sous-espace F de E","F non vide (0<sub>E</sub> ∈ F), stable par +, stable par multiplication par un scalaire."],
+["f : E → F linéaire","f(u + v) = f(u) + f(v) et f(λu) = λf(u)."],
+["Ker f et Im f","Ker f = {x ∈ E | f(x) = 0<sub>F</sub>}, sous-espace de E ; Im f = f(E), sous-espace de F."],
+["f injective ⟺","Ker f = {0<sub>E</sub>}."],
+["f surjective ⟺","Im f = F."],
+["Projection p sur F parallèlement à G","p∘p = p ; Ker p = G ; Im p = F."],
+["Formule d’Euler pour cos θ","cos θ = (e<sup>iθ</sup> + e<sup>−iθ</sup>) / 2."],
+["Formule d’Euler pour sin θ","sin θ = (e<sup>iθ</sup> − e<sup>−iθ</sup>) / (2i)."],
+["Formule de Moivre","(cos θ + i sin θ)<sup>n</sup> = cos nθ + i sin nθ."],
+["Racines n-ièmes de l’unité","e<sup>2ikπ/n</sup>, k = 0, …, n−1 ; leur somme vaut 0."],
+["Module et conjugué","|z|² = z·conj(z) = a² + b²."],
+["Inégalité triangulaire","|z + z’| ≤ |z| + |z’|."],
+["Rotation de centre a et d’angle θ","z’ − a = e<sup>iθ</sup>(z − a)."],
+["Distance d’un point à un plan","|ax<sub>0</sub> + by<sub>0</sub> + cz<sub>0</sub> + d| / √(a² + b² + c²)."],
+["Distance du point M à la droite (A, u) dans ℝ³","‖AM ∧ u‖ / ‖u‖."],
+["En Python, a // b et a % b","Quotient et reste de la division euclidienne de a par b."],
+["Sous-espace engendré Vect(v<sub>1</sub>, …, v<sub>n</sub>)","Ensemble des combinaisons linéaires des v<sub>i</sub> : le plus petit sous-espace contenant les v<sub>i</sub>."],
+["Somme F + G","{u + v | u ∈ F, v ∈ G} : le plus petit sous-espace contenant F et G."],
+["Forme exponentielle de z ≠ 0","z = re<sup>iθ</sup> avec r = |z| et θ = arg z (mod 2π)."],
+["Équation az² + bz + c = 0 dans ℂ","Δ = b² − 4ac, δ² = Δ : z = (−b ± δ) / (2a). Si Δ = 0 : racine double −b/(2a)."],
+["Racines carrées de a + ib (forme algébrique)","z = x + iy : x² − y² = a, 2xy = b et x² + y² = √(a² + b²)."],
+["Produit vectoriel u ∧ v dans ℝ³","u ∧ v ⟂ u et v ; ‖u ∧ v‖ = ‖u‖‖v‖|sin(u, v)| ; u ∧ v = 0 ⟺ u et v colinéaires."],
+["Volume du parallélépipède (u, v, w)","|det(u, v, w)| = |⟨u ∧ v, w⟩|."],
+["Distance d’un point A à la droite ax + by + c = 0","|ax<sub>A</sub> + by<sub>A</sub> + c| / √(a² + b²)."],
+["Plan de point A et de vecteurs directeurs u, v","Vecteur normal n = u ∧ v ; équation ax + by + cz + d = 0, d déterminé par A."],
+["Sphère de centre A et de rayon r","(x − x<sub>A</sub>)² + (y − y<sub>A</sub>)² + (z − z<sub>A</sub>)² = r²."],
+["Python : a, b = b, a","Affectation multiple : toutes les expressions de droite sont évaluées avant toute affectation."],
+["Python : input()","Renvoie toujours un str : pour un entier, int(input())."]
+];
+const P=[
+["Démonstration : 1/z = (a − ib)/(a² + b²) pour z = a + ib ≠ 0","<p>z·conj z = (a + ib)(a − ib) = a² + b² = |z|² > 0, car a et b ne sont pas tous deux nuls.</p><p>Donc z·(a − ib)/(a² + b²) = 1. L’inverse est unique : si zz’ = zz” = 1, alors z’ = z’(zz”) = (z’z)z” = z”.</p>",1],
+["Démonstration : 1 + z + … + z<sup>n</sup> = (1 − z<sup>n+1</sup>)/(1 − z) pour z ≠ 1","<p>(1 − z)·Σ<sub>k=0</sub><sup>n</sup> z<sup>k</sup> = Σ<sub>k=0</sub><sup>n</sup> z<sup>k</sup> − Σ<sub>k=1</sub><sup>n+1</sup> z<sup>k</sup> = 1 − z<sup>n+1</sup> (somme télescopique).</p><p>Comme z ≠ 1, on divise par 1 − z.</p>",1],
+["Démonstration : cos θ = (e<sup>iθ</sup> + e<sup>−iθ</sup>)/2 et sin θ = (e<sup>iθ</sup> − e<sup>−iθ</sup>)/(2i)","<p>Par définition e<sup>iθ</sup> = cos θ + i sin θ. Par parité du cosinus et imparité du sinus, e<sup>−iθ</sup> = cos θ − i sin θ = conj(e<sup>iθ</sup>).</p><p>En additionnant : e<sup>iθ</sup> + e<sup>−iθ</sup> = 2cos θ ; en soustrayant : e<sup>iθ</sup> − e<sup>−iθ</sup> = 2i sin θ. On divise par 2, puis par 2i.</p>",1],
+["Démonstration : e<sup>i(θ+θ’)</sup> = e<sup>iθ</sup>e<sup>iθ’</sup>, puis formule de Moivre","<p>(cos θ + i sin θ)(cos θ’ + i sin θ’) = (cos θ cos θ’ − sin θ sin θ’) + i(sin θ cos θ’ + cos θ sin θ’) = cos(θ + θ’) + i sin(θ + θ’), d’après les formules d’addition.</p><p>Par récurrence, (e<sup>iθ</sup>)<sup>n</sup> = e<sup>inθ</sup> pour n ∈ ℕ ; comme e<sup>iθ</sup>e<sup>−iθ</sup> = e<sup>0</sup> = 1, c’est aussi vrai pour n ∈ ℤ : (cos θ + i sin θ)<sup>n</sup> = cos nθ + i sin nθ.</p>",1],
+["Démonstration : F + G est un sous-espace vectoriel, le plus petit contenant F et G","<p>0<sub>E</sub> = 0<sub>E</sub> + 0<sub>E</sub> ∈ F + G. Si w = u + v et w’ = u’ + v’ (u, u’ ∈ F ; v, v’ ∈ G), alors w + w’ = (u + u’) + (v + v’) ∈ F + G et λw = λu + λv ∈ F + G.</p><p>F + G contient F (u = u + 0<sub>E</sub>) et G. Si H est un sous-espace contenant F et G, il est stable par +, donc contient tout u + v : F + G ⊂ H.</p>",1],
+["Démonstration : Vect(v<sub>1</sub>, …, v<sub>n</sub>) est un sous-espace, le plus petit contenant les v<sub>i</sub>","<p>0<sub>E</sub> = 0·v<sub>1</sub> + … + 0·v<sub>n</sub>. Si u = Σλ<sub>i</sub>v<sub>i</sub> et v = Σμ<sub>i</sub>v<sub>i</sub>, alors u + v = Σ(λ<sub>i</sub> + μ<sub>i</sub>)v<sub>i</sub> et λu = Σ(λλ<sub>i</sub>)v<sub>i</sub> : stabilité par + et par multiplication par un scalaire.</p><p>Si G est un sous-espace contenant les v<sub>i</sub>, il est stable par combinaisons linéaires, donc contient toutes les combinaisons des v<sub>i</sub> : Vect(v<sub>1</sub>, …, v<sub>n</sub>) ⊂ G.</p>",1],
+["Démonstration : g∘f est linéaire, et f<sup>−1</sup> est linéaire si f est un isomorphisme","<p>(g∘f)(αu + βv) = g(αf(u) + βf(v)) = αg(f(u)) + βg(f(v)) = α(g∘f)(u) + β(g∘f)(v).</p><p>Soient u’, v’ ∈ F, u = f<sup>−1</sup>(u’), v = f<sup>−1</sup>(v’). Par linéarité, f(αu + βv) = αu’ + βv’, donc f<sup>−1</sup>(αu’ + βv’) = αu + βv = αf<sup>−1</sup>(u’) + βf<sup>−1</sup>(v’).</p>",1],
+["Démonstration : Im f est un sous-espace de F ; si (e<sub>1</sub>, …, e<sub>n</sub>) est une base de E, Im f = Vect(f(e<sub>1</sub>), …, f(e<sub>n</sub>))","<p>0<sub>F</sub> = f(0<sub>E</sub>) ∈ Im f. Si y<sub>1</sub> = f(x<sub>1</sub>) et y<sub>2</sub> = f(x<sub>2</sub>), alors y<sub>1</sub> + y<sub>2</sub> = f(x<sub>1</sub> + x<sub>2</sub>) et λy<sub>1</sub> = f(λx<sub>1</sub>) : Im f est stable.</p><p>Si y = f(x) avec x = Σλ<sub>i</sub>e<sub>i</sub>, la linéarité donne y = Σλ<sub>i</sub>f(e<sub>i</sub>). Réciproquement, Σλ<sub>i</sub>f(e<sub>i</sub>) = f(Σλ<sub>i</sub>e<sub>i</sub>) ∈ Im f.</p>",1]
+];
+const K=[...C,...P,...D.map(d=>["Démonstration : "+d.t,"<p>"+d.o[0]+"</p><p>"+d.s+"</p>",1])];
+let S=Object.assign({pseudo:"",score:50,broke:false,seen:"",played:"",streak:0,n:0,nd:"",dn:[],cur:null,ci:0},(()=>{try{return JSON.parse(localStorage.getItem(KEY))}catch(e){return null}})());
+let fc=false,note="",tm;
+const day=()=>new Date().toLocaleDateString("sv-SE",{timeZone:"Europe/Paris"});
+const dnum=s=>Math.round(Date.parse(s+"T00:00:00Z")/864e5);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+
+/* ---- règles ---- */
+function daily(){const t=day();
+ if(S.seen&&S.seen!==t){const m=dnum(t)-dnum(S.seen)-1;if(m>0){S.score=Math.max(0,S.score-m);note="−"+m+" pt : "+m+" jour"+(m>1?"s":"")+" sans connexion."}}
+ if(S.played&&dnum(t)-dnum(S.played)>1)S.streak=0;
+ if(S.nd!==t){S.nd=t;S.n=0;S.dn=[]}
+ S.seen=t;if(S.score<=0)S.broke=true;save()}
+function touch(){const t=day();if(S.played===t)return;
+ S.streak=S.played&&dnum(t)-dnum(S.played)===1?S.streak+1:1;S.played=t;
+ if(S.streak>=5){S.score*=2;S.streak=0;note="5 jours d’affilée avec une démo : score ×2 !"}}
+function start(){const all=D.map((_,i)=>i),pool=all.filter(i=>!S.dn.includes(i)),p=pool.length?pool:all;
+ S.cur={i:p[Math.random()*p.length|0],o:shuf([0,1,2,3]),a:null,w:"",r:0};save();render()}
+function pick(j){const c=S.cur;if(c.a!=null)return;c.a=j;touch();
+ S.score=Math.max(0,S.score+(c.o[j]===0?10:-15));save();sync();render()}
+function fin(g){const c=S.cur;S.score+=g;S.dn.push(c.i);S.n++;S.cur=null;if(S.score<=0)S.broke=true;save();sync();render()}
+
+/* ---- bourse (Google Sheet) ---- */
+function sync(){clearTimeout(tm);tm=setTimeout(post,1500)}
+async function post(){if(!API||!S.pseudo)return;
+ try{await fetch(API,{method:"POST",mode:"no-cors",body:JSON.stringify({p:S.pseudo,s:S.score,d:day().replace(/-/g,""),k:S.streak})})}catch(e){}
+ load()}
+async function load(){if(!API)return mkt(null);
+ try{mkt(await(await fetch(API)).json())}catch(e){mkt(null)}}
+function spark(a){if(a.length<2)return"";const mn=Math.min(...a),mx=Math.max(...a),w=64,h=20;
+ const p=a.map((y,i)=>(i/(a.length-1)*w).toFixed(1)+","+(h-(mx===mn?h/2:(y-mn)/(mx-mn)*h)).toFixed(1)).join(" ");
+ return`<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${p}" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>`}
+function mkt(r){const el=$("mkt"),tp=$("tape-in");
+ if(!r){tp.innerHTML="";el.innerHTML=`<p class="k">${API?"Bourse injoignable pour l’instant.":"Bourse hors ligne : colle l’URL du script Google dans la constante API."}</p>`;return}
+ r.sort((a,b)=>b.s-a.s);
+ const f=x=>{const d=x.s-x.v,pc=x.v>0?Math.round(d/x.v*100):0;return{c:d>0?"u":d<0?"d":"",a:d>0?"▲":d<0?"▼":"■",pc:(pc>0?"+":"")+pc+" %",t:esc(x.p)}};
+ el.innerHTML="<table><tr><th>#</th><th>Action</th><th>Cours</th><th>Var.</th><th></th></tr>"+r.map((x,i)=>{const y=f(x);
+  return`<tr><td>${i+1}</td><td>${y.t}${x.p===S.pseudo?" (toi)":""}</td><td>${Number(x.s)}</td><td class="${y.c}">${y.a} ${y.pc}</td><td class="${y.c}">${spark([...(x.h||[]).slice(-9),x.s])}</td></tr>`}).join("")+"</table>";
+ const t=r.map(x=>{const y=f(x);return`<span>${y.t} ${Number(x.s)} <b class="${y.c}">${y.a} ${y.pc}</b></span>`}).join("");tp.innerHTML=t+t}
+
+/* ---- affichage ---- */
+function stats(){$("stats").innerHTML=`<div><div class="big">${S.score}</div><p class="k">points · ${esc(S.pseudo||"sans pseudo")}</p></div><div><p class="k">Série</p><b>${S.streak}/5 jours</b></div><div><p class="k">Session</p><b>${Math.min(S.n,5)}/5</b></div>${S.pseudo?`<button class="alt" id="tg" ${S.broke?"disabled":""}>${fc?"Retour au jeu":"Flashcards"}</button>`:""}`;
+ if($("tg"))$("tg").onclick=()=>{fc=!fc;render()}}
+function render(){stats();$("note").textContent=note;note="";const v=$("view");
+ if(!S.pseudo)return welcome(v);
+ if(S.broke||fc)return cards(v);
+ if(S.cur)return game(v);
+ if(S.n>=5){v.innerHTML=`<div class="sol"><b>${MSG}</b></div><p class="k">Session terminée : 5 démonstrations jouées. Prochaine session à minuit.</p>`;return}
+ home(v)}
+function welcome(v){v.innerHTML=`<h2>Ton pseudo</h2><p>Il apparaît en bourse (12 caractères max, sans mot de passe).</p><input id="ps" maxlength="12" autocomplete="off"><button class="go" id="okp">Valider</button>`;
+ $("okp").onclick=()=>{const p=$("ps").value.toUpperCase().replace(/[^A-Z0-9_-]/g,"");if(p.length<2)return;S.pseudo=p;save();sync();render()}}
+function home(v){const r=5-S.n;v.innerHTML=`<h2>${r} démonstration${r>1?"s":""} aujourd’hui</h2><p>Bon début : +10, mauvais : −15. Puis écris la suite : +10 (ou +5 après une erreur), ou passe : +0. −1 pt par jour sans connexion ; 5 jours d’affilée avec au moins une démo : score ×2.</p><button class="go" id="st">Commencer</button>`;$("st").onclick=start}
+function game(v){const c=S.cur,d=D[c.i],a=c.a!=null,ok=a&&c.o[c.a]===0;
+ let h=`<p class="k">Démonstration ${S.n+1} sur 5</p><h2>${d.t}</h2>`+(a?"":"<p>Quel est le bon début de la démonstration ?</p>");
+ c.o.forEach((k,j)=>h+=`<button class="opt ${a?(k===0?"good":j===c.a?"bad":""):""}" ${a?"disabled":""}>${d.o[k]}</button>`);
+ if(a){h+=`<p><b>${ok?"Juste : +10.":"Raté : −15."}</b> ${c.r?"":"Écris la suite de la démonstration, ou passe si tu ne la connais pas."}</p>${c.sk?"":`<textarea id="w" ${c.r?"readonly":""}>${esc(c.w)}</textarea>`}`;
+  h+=c.r?`<div class="sol"><b>Correction.</b> ${d.s}</div>`+(c.sk?`<button class="go" id="no">Suivant : +0</button>`:`<button class="go" id="ok">J’avais l’essentiel : +${ok?10:5}</button><button class="alt" id="no">Pas vraiment : +0</button>`):`<button class="go" id="rv" ${c.w.trim()?"":"disabled"}>Voir la correction</button><button class="alt" id="sk">Passer : je ne sais pas</button>`}
+ v.innerHTML=h;
+ v.querySelectorAll(".opt").forEach((b,j)=>b.onclick=()=>pick(j));
+ if(!a)return;
+ if(!c.r){$("w").oninput=e=>{c.w=e.target.value;$("rv").disabled=!c.w.trim();save()};$("rv").onclick=()=>{c.r=1;save();render()};$("sk").onclick=()=>{c.r=1;c.sk=1;c.w="";save();render()}}
+ else{if($("ok"))$("ok").onclick=()=>fin(ok?10:5);$("no").onclick=()=>fin(0)}}
+function cards(v){const c=K[S.ci%K.length],p=S.broke;
+ v.innerHTML=`<h2>Flashcards</h2><p class="k">${p?"Mode récupération : +1 pt par carte jusqu’à 50 pts.":"Révision libre : sans points tant que ton score n’est pas tombé à 0."}</p><div class="sol"><b>${c[0]}</b><div id="an" hidden>${c[1]}</div></div><button class="alt" id="rv">${c[2]?"Voir la démonstration":"Voir la réponse"}</button><button class="go" id="nx" hidden>Carte suivante${p?" (+1 pt)":""}</button>`;
+ $("rv").onclick=()=>{$("an").hidden=false;$("nx").hidden=false;$("rv").hidden=true};
+ $("nx").onclick=()=>{S.ci++;if(p){S.score++;if(S.score>=50){S.broke=false;fc=false;note="50 pts retrouvés : relance une partie !"}save();sync()}else save();render()}}
+
+daily();render();load();if(S.pseudo)sync();
+setInterval(()=>{if(day()!==S.nd){daily();render();sync()}},6e4);setInterval(load,6e4);
+</script></body></html>
